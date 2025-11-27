@@ -52,7 +52,7 @@
 <body>
 
 <h2>Monitoring Mesin (Simulasi)</h2>
-<h2>KELOMPOK 4 NIM 007, 019, 061 - 2024i</h2>
+<h2>Tugas Elektronika Daya - 2024i</h2>
 
 <div class="container">
 
@@ -93,7 +93,13 @@
 
 <!-- ================= GRAFIK ================= -->
 <div class="chart-container">
-  <canvas id="chartMonitor"></canvas>
+  <canvas id="chartSuhu"></canvas>
+</div>
+<div class="chart-container">
+  <canvas id="chartVolt"></canvas>
+</div>
+<div class="chart-container">
+  <canvas id="chartRPM"></canvas>
 </div>
 
 <script>
@@ -104,73 +110,59 @@ window.onload = () => {
     const gVolt = g[1];
     const gRPM  = g[2];
 
-    const ctx = document.getElementById('chartMonitor').getContext('2d');
+    const ctxS = document.getElementById('chartSuhu').getContext('2d');
+    const ctxV = document.getElementById('chartVolt').getContext('2d');
+    const ctxR = document.getElementById('chartRPM').getContext('2d');
 
-    const chart = new Chart(ctx, {
+    const chartSuhu = new Chart(ctxS, {
       type: 'line',
-      data: {
-        labels: [],
-        datasets: [
-          {
-            label: 'Suhu (°C)',
-            data: [],
-            borderWidth: 2,
-            borderColor: '#00c851',
-            backgroundColor: 'rgba(0,200,81,0.2)'
-          },
-          {
-            label: 'Tegangan (V)',
-            data: [],
-            borderWidth: 2,
-            borderColor: '#007bff',
-            backgroundColor: 'rgba(0,123,255,0.2)'
-          },
-          {
-            label: 'RPM',
-            data: [],
-            borderWidth: 2,
-            borderColor: '#fdd835',
-            backgroundColor: 'rgba(253,216,53,0.2)'
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        animation: false,
-        scales: {
-          x: { title: { display: true, text: 'Waktu (s)' } },
-          y: { title: { display: true, text: 'Nilai' } }
-        }
-      }
+      data: { labels: [], datasets: [{ label: 'Suhu (°C)', data: [], borderWidth: 2, borderColor: '#00c851', backgroundColor:'rgba(0,200,81,0.2)' }] },
+      options:{ responsive:true, animation:false }
+    });
+
+    const chartVolt = new Chart(ctxV, {
+      type: 'line',
+      data: { labels: [], datasets: [{ label: 'Tegangan (V)', data: [], borderWidth: 2, borderColor: '#007bff', backgroundColor:'rgba(0,123,255,0.2)' }] },
+      options:{ responsive:true, animation:false }
+    });
+
+    const chartRPM = new Chart(ctxR, {
+      type: 'line',
+      data: { labels: [], datasets: [{ label: 'RPM', data: [], borderWidth: 2, borderColor: '#fdd835', backgroundColor:'rgba(253,216,53,0.2)' }] },
+      options:{ responsive:true, animation:false }
     });
 
     let time = 0;
 
     setInterval(() => {
-      // Simulasi data
       let suhu = 60 + Math.random()*50;
       let volt = 180 + Math.random()*70;
       let rpm  = 1000 + Math.random()*4000;
 
-      // Update gauge
       gSuhu.value = suhu;
       gVolt.value = volt;
       gRPM.value  = rpm;
 
-      // Update grafik
-      chart.data.labels.push(time++ + 's');
-      chart.data.datasets[0].data.push(suhu);
-      chart.data.datasets[1].data.push(volt);
-      chart.data.datasets[2].data.push(rpm);
+      chartSuhu.data.labels.push(time+'s');
+      chartVolt.data.labels.push(time+'s');
+      chartRPM.data.labels.push(time+'s');
 
-      if (chart.data.labels.length > 20) {
-        chart.data.labels.shift();
-        chart.data.datasets.forEach(d => d.data.shift());
+      chartSuhu.data.datasets[0].data.push(suhu);
+      chartVolt.data.datasets[0].data.push(volt);
+      chartRPM.data.datasets[0].data.push(rpm);
+
+      if(chartSuhu.data.labels.length > 20){
+        chartSuhu.data.labels.shift(); chartSuhu.data.datasets[0].data.shift();
+        chartVolt.data.labels.shift(); chartVolt.data.datasets[0].data.shift();
+        chartRPM.data.labels.shift(); chartRPM.data.datasets[0].data.shift();
       }
 
-      chart.update();
+      chartSuhu.update();
+      chartVolt.update();
+      chartRPM.update();
 
-    }, 1000);
+      time++;
+    },1000);
 
   },800);
 }
